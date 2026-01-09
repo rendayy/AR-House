@@ -1,99 +1,98 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>AR Visualisasi Properti</title>
+    <meta charset="UTF-8" />
+    <title>AR Home Marketing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- A-Frame -->
-  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <!-- A-Frame & AR.js -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/aframe/build/aframe-ar.js"></script>
 
-  <!-- MindAR Image -->
-  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
 
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-      background: black;
-    }
+        .overlay {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 20px;
+            z-index: 999;
+            font-weight: bold;
+        }
 
-    #hint {
-      position: fixed;
-      bottom: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.6);
-      color: white;
-      padding: 10px 16px;
-      border-radius: 20px;
-      font-size: 14px;
-      z-index: 10;
-    }
-
-    #info {
-      position: fixed;
-      top: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.7);
-      color: white;
-      padding: 12px 18px;
-      border-radius: 12px;
-      display: none;
-      z-index: 10;
-    }
-  </style>
+        .hint {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(102,126,234,0.9);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 15px;
+            z-index: 999;
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
 
-<div id="info">Rumah Modern – 2 Lantai</div>
-<div id="hint">Arahkan kamera ke marker</div>
+    <!-- UI Overlay -->
+    <div class="overlay">
+        📱 Arahkan kamera ke Hiro Marker
+    </div>
 
-<a-scene
-  mindar-image="imageTargetSrc: https://raw.githubusercontent.com/rendayy/AR-House/master/targetss.mind;"
-  embedded
-  vr-mode-ui="enabled: false"
-  device-orientation-permission-ui="enabled: true"
-  renderer="colorManagement: true; physicallyCorrectLights: true"
->
+    <div class="hint">
+        Gunakan marker Hiro<br>
+        Model rumah akan muncul di atas marker
+    </div>
 
-  <a-assets>
-    <a-asset-item
-      id="rumah"
-      src="https://raw.githubusercontent.com/rendayy/AR-House/master/rumahmodern.glb">
-    </a-asset-item>
-  </a-assets>
+    <!-- AR Scene -->
+    <a-scene
+        embedded
+        arjs="sourceType: webcam; debugUIEnabled: false;"
+        renderer="logarithmicDepthBuffer: true;"
+    >
 
-  <!-- TARGET -->
-  <a-entity mindar-image-target="targetIndex: 0">
-    <a-gltf-model
-      id="modelRumah"
-      src="#rumah"
-      position="0 0 -0.1"
-      scale="0.03 0.03 0.03"
-      rotation="0 180 0">
-    </a-gltf-model>
-  </a-entity>
+        <!-- Assets -->
+        <a-assets>
+            <a-asset-item
+                id="rumahModel"
+                src="rumahmodern.glb">
+            </a-asset-item>
+        </a-assets>
 
-  <!-- CAMERA (HARUS PALING BAWAH) -->
-  <a-camera
-    position="0 0 0"
-    look-controls="enabled: false">
-  </a-camera>
+        <!-- Hiro Marker -->
+        <a-marker preset="hiro">
 
-</a-scene>
+            <!-- 3D Model -->
+            <a-entity
+                gltf-model="#rumahModel"
+                position="0 0 0"
+                rotation="0 180 0"
+                scale="0.3 0.3 0.3"
+                animation="property: rotation; to: 0 360 0; loop: true; dur: 20000">
+            </a-entity>
 
-<script>
-  const model = document.getElementById('modelRumah');
-  const info = document.getElementById('info');
+            <!-- Lighting -->
+            <a-light type="ambient" intensity="0.6"></a-light>
+            <a-light type="directional" intensity="0.8" position="1 2 1"></a-light>
 
-  model.addEventListener('touchstart', () => {
-    info.style.display = 'block';
-    setTimeout(() => info.style.display = 'none', 3000);
-  });
-</script>
+        </a-marker>
+
+        <!-- Camera -->
+        <a-entity camera></a-entity>
+
+    </a-scene>
 
 </body>
 </html>
