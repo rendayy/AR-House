@@ -7,7 +7,7 @@
   <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
-  <!-- MindAR -->
+  <!-- MindAR Image -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
   <style>
@@ -15,11 +15,12 @@
       margin: 0;
       overflow: hidden;
       font-family: Arial, sans-serif;
+      background: black;
     }
 
     #hint {
       position: fixed;
-      bottom: 20px;
+      bottom: 16px;
       left: 50%;
       transform: translateX(-50%);
       background: rgba(0,0,0,0.6);
@@ -32,7 +33,7 @@
 
     #info {
       position: fixed;
-      top: 20px;
+      top: 16px;
       left: 50%;
       transform: translateX(-50%);
       background: rgba(0,0,0,0.7);
@@ -47,39 +48,48 @@
 
 <body>
 
-<div id="info">🏡 Rumah Modern – 2 Lantai</div>
-<div id="hint">Arahkan kamera ke marker • Pinch untuk zoom</div>
+<div id="info">Rumah Modern – 2 Lantai</div>
+<div id="hint">Arahkan kamera ke marker</div>
 
 <a-scene
-  mindar-image="imageTargetSrc: targets.mind;"
+  mindar-image="imageTargetSrc: https://raw.githubusercontent.com/rendayy/AR-House/master/targets.mind;"
+  embedded
   vr-mode-ui="enabled: false"
   device-orientation-permission-ui="enabled: true"
-  embedded
+  renderer="colorManagement: true; physicallyCorrectLights: true"
 >
 
   <a-assets>
-    <a-asset-item id="rumah" src="rumahmodern.glb"></a-asset-item>
+    <a-asset-item
+      id="rumah"
+      src="https://raw.githubusercontent.com/rendayy/AR-House/master/rumahmodern.glb">
+    </a-asset-item>
   </a-assets>
 
-  <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-
+  <!-- TARGET -->
   <a-entity mindar-image-target="targetIndex: 0">
     <a-gltf-model
+      id="modelRumah"
       src="#rumah"
-      position="0 0 0"
-      scale="0.25 0.25 0.25"
-      rotation="0 180 0"
-      class="clickable"
-    ></a-gltf-model>
+      position="0 0 -0.1"
+      scale="0.03 0.03 0.03"
+      rotation="0 180 0">
+    </a-gltf-model>
   </a-entity>
+
+  <!-- CAMERA (HARUS PALING BAWAH) -->
+  <a-camera
+    position="0 0 0"
+    look-controls="enabled: false">
+  </a-camera>
 
 </a-scene>
 
 <script>
-  const model = document.querySelector('.clickable');
+  const model = document.getElementById('modelRumah');
   const info = document.getElementById('info');
 
-  model.addEventListener('click', () => {
+  model.addEventListener('touchstart', () => {
     info.style.display = 'block';
     setTimeout(() => info.style.display = 'none', 3000);
   });
