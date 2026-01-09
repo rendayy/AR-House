@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <title>AR Properti Digital</title>
+  <title>AR Visualisasi Properti</title>
 
   <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
@@ -13,36 +13,33 @@
   <style>
     body {
       margin: 0;
-      background: #000;
-      font-family: "Segoe UI", system-ui, sans-serif;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
     }
 
-    /* Header */
-    .header {
+    #hint {
       position: fixed;
-      top: 16px;
+      bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(15, 15, 15, 0.7);
-      color: #fff;
-      padding: 10px 18px;
-      border-radius: 14px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 20px;
       font-size: 14px;
-      backdrop-filter: blur(10px);
       z-index: 10;
     }
 
-    /* Footer hint */
-    .hint {
+    #info {
       position: fixed;
-      bottom: 18px;
+      top: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(15, 15, 15, 0.6);
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 12px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 12px 18px;
+      border-radius: 12px;
+      display: none;
       z-index: 10;
     }
   </style>
@@ -50,76 +47,41 @@
 
 <body>
 
-<!-- UI Overlay -->
-<div class="header">AR Visualisasi Properti</div>
-<div class="hint">Tap rumah untuk info • Pinch untuk zoom</div>
+<div id="info">🏡 Rumah Modern – 2 Lantai</div>
+<div id="hint">Arahkan kamera ke marker • Pinch untuk zoom</div>
 
 <a-scene
   mindar-image="imageTargetSrc: targets.mind;"
-  embedded
-  color-space="sRGB"
-  renderer="colorManagement: true; physicallyCorrectLights: true"
   vr-mode-ui="enabled: false"
-  device-orientation-permission-ui="enabled: false">
+  device-orientation-permission-ui="enabled: true"
+  embedded
+>
 
-  <!-- Assets -->
   <a-assets>
-    <a-asset-item id="rumahModel" src="rumahmodern.glb"></a-asset-item>
+    <a-asset-item id="rumah" src="rumahmodern.glb"></a-asset-item>
   </a-assets>
 
-  <!-- Marker Target -->
+  <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
   <a-entity mindar-image-target="targetIndex: 0">
-
-    <!-- Rumah 3D -->
     <a-gltf-model
-      id="rumah"
-      src="#rumahModel"
+      src="#rumah"
       position="0 0 0"
-      scale="0.32 0.32 0.32"
-      rotation="0 0 0"
-      animation="property: rotation; to: 0 360 0; loop: true; dur: 20000"
-      class="clickable">
-    </a-gltf-model>
-
-    <!-- Panel Informasi -->
-    <a-entity id="infoPanel" visible="false" position="0 0.7 0">
-
-      <a-plane
-        width="1.5"
-        height="0.65"
-        color="#111"
-        opacity="0.9"
-        material="shader: flat">
-      </a-plane>
-
-      <a-text
-        value="RUMAH MODERN MINIMALIS\n\nTipe: 45\nLuas Tanah: 90 m²\nLuas Bangunan: 45 m²\nKamar Tidur: 2\nHarga Mulai: Rp750 JT\n\nTap rumah untuk menutup"
-        align="center"
-        color="#FFFFFF"
-        width="2.2"
-        position="0 0 0.01">
-      </a-text>
-
-    </a-entity>
-
+      scale="0.25 0.25 0.25"
+      rotation="0 180 0"
+      class="clickable"
+    ></a-gltf-model>
   </a-entity>
-
-  <!-- Camera -->
-  <a-camera
-    position="0 0 0"
-    look-controls="enabled: false"
-    cursor="rayOrigin: mouse">
-  </a-camera>
 
 </a-scene>
 
 <script>
-  const rumah = document.querySelector('#rumah');
-  const infoPanel = document.querySelector('#infoPanel');
+  const model = document.querySelector('.clickable');
+  const info = document.getElementById('info');
 
-  rumah.addEventListener('click', () => {
-    const visible = infoPanel.getAttribute('visible');
-    infoPanel.setAttribute('visible', !visible);
+  model.addEventListener('click', () => {
+    info.style.display = 'block';
+    setTimeout(() => info.style.display = 'none', 3000);
   });
 </script>
 
